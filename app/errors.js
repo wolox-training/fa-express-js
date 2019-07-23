@@ -3,6 +3,9 @@ const internalError = (message, internalCode) => ({
   internalCode
 });
 
+exports.BAD_REQUEST = 'bad_request';
+exports.badRequestError = message => internalError(message, exports.BAD_REQUEST);
+
 exports.DATABASE_ERROR = 'database_error';
 exports.databaseError = message => internalError(message, exports.DATABASE_ERROR);
 
