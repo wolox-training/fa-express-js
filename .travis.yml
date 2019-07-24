@@ -6,7 +6,7 @@ node_js:
 sudo: true
 
 env:
-  - CXX=g++-4.8 NODE_ENV=testing DB_USERNAME=fmontoy DB_PASSWORD=1234 DB_NAME=training DB_NAME_DEV=training_dev DB_NAME_TEST=booktest
+  - CXX=g++-4.8 NODE_ENV=testing DB_USERNAME=postgres DB_NAME=training DB_NAME_DEV=training_dev DB_NAME_TEST=booktest
 addons:
   apt:
     sources:
