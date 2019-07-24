@@ -6,7 +6,7 @@ node_js:
 sudo: true
 
 env:
-  - CXX=g++-4.8 NODE_ENV=testing
+  - CXX=g++-4.8 NODE_ENV=testing DB_USERNAME=fmontoy DB_PASSWORD=1234 DB_NAME=training DB_NAME_DEV=training_dev DB_NAME_TEST=booktest
 addons:
   apt:
     sources:
@@ -18,5 +18,5 @@ services:
   - postgresql
 
 before_script:
-  - psql -c "CREATE DATABASE bookstest;" -U postgres
+  - psql -c "CREATE DATABASE $DB_NAME_TEST;" -U postgres
   - npm run migrations-test
