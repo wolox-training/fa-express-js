@@ -1,0 +1,22 @@
+language: node_js
+
+node_js:
+  - "10.14.1"
+
+sudo: true
+
+env:
+  - CXX=g++-4.8 NODE_ENV=testing DB_USERNAME=postgres DB_NAME_TEST=booktest
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c "CREATE DATABASE $DB_NAME_TEST;" -U postgres
+  - npm run migrations-test
