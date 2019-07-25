@@ -9,6 +9,6 @@ exports.getPhotos = (req, res, next) =>
   getPhotos(req.params.id)
     .then(response => {
       const photos = response.data.filter(album => album.albumId.toString() === req.params.id);
-      res.send(photos);
+      return res.send(photos);
     })
     .catch(next);
