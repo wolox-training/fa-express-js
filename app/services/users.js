@@ -5,5 +5,5 @@ const bcrypt = require('bcrypt');
 exports.setUser = user =>
   bcrypt.hash(user.password, 10).then(hash => {
     user.password = hash;
-    User.create(user).catch(error => Promise.reject(errors.databaseError(error.message)));
+    return User.create(user).catch(error => Promise.reject(errors.databaseError(error.message)));
   });

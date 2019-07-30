@@ -8,9 +8,9 @@ exports.user_schema = {
   },
   password: {
     in: ['body'],
-    isLength: {
-      errorMessage: 'Password should be at least 8 chars long',
-      options: { min: 8 }
+    matches: {
+      options: /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
+      errorMessage: 'The password must have letters and numbers and has to be at least 8 chars long'
     }
   },
 
