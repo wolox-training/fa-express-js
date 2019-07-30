@@ -1,9 +1,19 @@
+const { User } = require('../models');
+
 exports.user_schema = {
   email: {
     in: ['body'],
     matches: {
       options: /^[a-zA-Z0-9]+@wolox.([A-Za-z])+$/,
       errorMessage: 'The email must have the wolox domain'
+    },
+    custom: {
+      options: value =>
+        User.findAll({ where: { email: value } }).then(users =>
+          users.length > 0
+            ? Promise.reject(Error('Email must be unique'))
+            : Promise.resolve('Email is unique')
+        )
     }
   },
   password: {
