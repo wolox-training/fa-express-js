@@ -8,10 +8,8 @@ exports.user_schema = {
       errorMessage: 'The email must have the wolox domain'
     },
     custom: {
-      options: value =>
-        User.findAll({ where: { email: value } }).then(users =>
-          users.length > 0 ? Promise.reject(Error('Email must be unique')) : Promise.resolve(true)
-        )
+      options: value => User.findAll({ where: { email: value } }).then(users => !(users.length > 0)),
+      errorMessage: 'Email must be unique'
     }
   },
   password: {
