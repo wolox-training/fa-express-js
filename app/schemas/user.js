@@ -10,9 +10,7 @@ exports.user_schema = {
     custom: {
       options: value =>
         User.findAll({ where: { email: value } }).then(users =>
-          users.length > 0
-            ? Promise.reject(Error('Email must be unique'))
-            : Promise.resolve('Email is unique')
+          users.length > 0 ? Promise.reject(Error('Email must be unique')) : Promise.resolve(true)
         )
     }
   },
