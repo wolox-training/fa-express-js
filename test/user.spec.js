@@ -8,6 +8,20 @@ const user = {
   password: 'holamundo2019'
 };
 
+const user_params = {
+  name: '',
+  last_name: 'Montoya',
+  email: 'joedoe@wolox.co',
+  password: 'holamundo'
+};
+
+const user2 = {
+  name: 'Felipe',
+  last_name: 'Montoya',
+  email: 'joedoe@wolox.co',
+  password: 'holamundo2010'
+};
+
 describe('User', () => {
   it('Service responds with 200', async () => {
     await request(app)
@@ -17,12 +31,6 @@ describe('User', () => {
   });
 
   it('Service responds with 400', async () => {
-    const user2 = {
-      name: 'Felipe',
-      last_name: 'Montoya',
-      email: 'joedoe@wolox.co',
-      password: 'holamundo2010'
-    };
     await request(app)
       .post('/users')
       .send(user);
@@ -47,13 +55,6 @@ describe('User', () => {
   });
 
   it('Service responds with 400 for empty params', async () => {
-    const user_params = {
-      name: '',
-      last_name: 'Montoya',
-      email: 'joedoe@wolox.co',
-      password: 'holamundo'
-    };
-
     await request(app)
       .post('/users')
       .send(user_params)
