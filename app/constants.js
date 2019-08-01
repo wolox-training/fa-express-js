@@ -1,1 +1,1 @@
-module.exports.SALTROUNDS = 10;
+exports.SALTROUNDS = 10;
