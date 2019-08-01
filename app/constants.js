@@ -1,2 +1,2 @@
-module.exports.SALTROUNDS = 10;
-module.exports.SECRET = 'wolox';
+exports.SALTROUNDS = 10;
+exports.SECRET = 'wolox';

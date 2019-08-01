@@ -1,7 +1,7 @@
 const { User } = require('../models');
 const errors = require('../errors');
 
-exports.user_schema = {
+exports.userSchema = {
   email: {
     in: ['body'],
     matches: {
@@ -13,7 +13,7 @@ exports.user_schema = {
         User.findAll({ where: { email: value } }).then(users =>
           users.length > 0
             ? Promise.reject(errors.badRequestError('Email must be unique'))
-            : Promise.resolve(true)
+            : Promise.resolve()
         )
     }
   },
