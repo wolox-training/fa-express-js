@@ -1,6 +1,6 @@
 const { User } = require('../models');
 const errors = require('../errors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { SALTROUNDS } = require('../constants');
 
 exports.createUser = user =>
