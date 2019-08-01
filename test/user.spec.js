@@ -8,21 +8,7 @@ const user = {
   password: 'holamundo2019'
 };
 
-const user_params = {
-  name: '',
-  last_name: 'Montoya',
-  email: 'joedoe@wolox.co',
-  password: 'holamundo'
-};
-
-const user2 = {
-  name: 'Felipe',
-  last_name: 'Montoya',
-  email: 'joedoe@wolox.co',
-  password: 'holamundo2010'
-};
-
-describe('User', () => {
+describe('User Creation', () => {
   it('Service responds with 200', async () => {
     await request(app)
       .post('/users')
@@ -36,28 +22,53 @@ describe('User', () => {
       .send(user);
     await request(app)
       .post('/users')
-      .send(user2)
+      .send(user)
       .expect(400);
   });
 
   it('Service responds with 400 for bad password', async () => {
-    const user_password = {
-      name: 'Felipe',
-      last_name: 'Montoya',
-      email: 'joedoe@wolox.co',
-      password: 'holamundo'
-    };
-
     await request(app)
       .post('/users')
-      .send(user_password)
+      .send({ ...user, password: 'holamundo' })
       .expect(400);
   });
 
   it('Service responds with 400 for empty params', async () => {
     await request(app)
       .post('/users')
-      .send(user_params)
+      .send({ ...user, name: '' })
+      .expect(400);
+  });
+});
+
+describe('Sign In', () => {
+  const userSignIn = {
+    email: 'joedoe@wolox.co',
+    password: 'holamundo2019'
+  };
+
+  it('User signs-in correctly', async () => {
+    await request(app)
+      .post('/users')
+      .send(user);
+
+    await request(app)
+      .post('/users/sessions')
+      .send(userSignIn)
+      .expect(200);
+  });
+
+  it('User signs-in with wrong password', async () => {
+    await request(app)
+      .post('/users/sessions')
+      .send({ ...userSignIn, password: 'holamundo2018' })
+      .expect(400);
+  });
+
+  it('User signs-in with unexisting email', async () => {
+    await request(app)
+      .post('/users/sessions')
+      .send({ ...userSignIn, email: 'fmontoy@wolox.ar' })
       .expect(400);
   });
 });
