@@ -2,8 +2,10 @@ const { checkSchema, validationResult } = require('express-validator/check');
 const errors = require('../errors');
 
 const checkValidationResult = (req, res, next) => {
-  const error = validationResult(req).errors.map(err => err.msg);
-  return validationResult(req).isEmpty() ? next() : next(errors.badRequestError(error));
+  const validationErrors = validationResult(req)
+    .errors.map(err => err.msg.message)
+    .toString();
+  return validationResult(req).isEmpty() ? next() : next(errors.badRequestError(validationErrors));
 };
 
 const validate = schema => checkSchema(schema);
