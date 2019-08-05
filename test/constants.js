@@ -1,4 +1,4 @@
-exports.USER = {
+exports.userTest = {
   name: 'Joe',
   last_name: 'Doe',
   email: 'joedoe@wolox.co',
