@@ -1,63 +1,56 @@
 const request = require('supertest');
 const app = require('../app');
 
-const user = {
+const userCreate = {
   name: 'Joe',
   last_name: 'Doe',
   email: 'joedoe@wolox.co',
   password: 'holamundo2019'
 };
 
-const user_params = {
+const userParams = {
   name: '',
   last_name: 'Montoya',
   email: 'joedoe@wolox.co',
   password: 'holamundo'
 };
 
-const user2 = {
+const userPassword = {
   name: 'Felipe',
   last_name: 'Montoya',
   email: 'joedoe@wolox.co',
-  password: 'holamundo2010'
+  password: 'holamundo'
 };
 
-describe('User', () => {
+describe('User creation', () => {
   it('Service responds with 200', async () => {
     await request(app)
       .post('/users')
-      .send(user)
+      .send(userCreate)
       .expect(200);
   });
 
   it('Service responds with 400', async () => {
     await request(app)
       .post('/users')
-      .send(user);
+      .send(userCreate);
     await request(app)
       .post('/users')
-      .send(user2)
+      .send(userCreate)
       .expect(400);
   });
 
   it('Service responds with 400 for bad password', async () => {
-    const user_password = {
-      name: 'Felipe',
-      last_name: 'Montoya',
-      email: 'joedoe@wolox.co',
-      password: 'holamundo'
-    };
-
     await request(app)
       .post('/users')
-      .send(user_password)
+      .send(userPassword)
       .expect(400);
   });
 
   it('Service responds with 400 for empty params', async () => {
     await request(app)
       .post('/users')
-      .send(user_params)
+      .send(userParams)
       .expect(400);
   });
 });
