@@ -11,8 +11,10 @@ describe('User Creation', () => {
       .send(userTest)
       .then(res => {
         expect(res.statusCode).toEqual(200);
-        return User.findOne({ where: { email: userTest.email } }).then(users => {
-          expect(lodash.pick(users, ['name', 'last_name', 'email'])).toEqual(res.body);
+        return User.findOne({ where: { email: userTest.email } }).then(user => {
+          expect(lodash.pick(user, ['name', 'last_name', 'email'])).toEqual(
+            lodash.pick(userTest, ['name', 'last_name', 'email'])
+          );
         });
       }));
 
