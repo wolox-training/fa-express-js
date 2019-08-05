@@ -4,7 +4,7 @@ const { User } = require('../app/models');
 const { USER } = require('./constants');
 
 describe('User Creation', () => {
-  it('Service responds with 200 when user is created correctly', () =>
+  it('Server responds with success when params are right and user is created correctly', () =>
     request(app)
       .post('/users')
       .send(USER)
@@ -15,7 +15,7 @@ describe('User Creation', () => {
         });
       }));
 
-  it('Service responds with 400 when the email exists', () =>
+  it('Server responds with bad request error when the email exists in the database', () =>
     request(app)
       .post('/users')
       .send(USER)
@@ -29,7 +29,7 @@ describe('User Creation', () => {
           })
       ));
 
-  it('Service responds with 400 for bad password', () =>
+  it('Server responds with bad request error for bad password (no number in password)', () =>
     request(app)
       .post('/users')
       .send({ ...USER, password: 'holamundo' })
@@ -40,7 +40,7 @@ describe('User Creation', () => {
         );
       }));
 
-  it('Service responds with 400 for empty params in body', () =>
+  it('Server responds with bad request error for empty params in body (name is empty)', () =>
     request(app)
       .post('/users')
       .send({ ...USER, name: '' })
