@@ -9,28 +9,31 @@ exports.createUser = user =>
     return User.create(user).catch(error => Promise.reject(errors.databaseError(error.message)));
   });
 
-exports.signInUser = signData => {
-  logger.info('Trying to sign-in the user...');
+exports.signInUser = ({ email, password }) => {
+  logger.info('Trying to sign-in the user');
   return User.findOne({
     where: {
-      email: signData.email
+      email
     }
   })
     .then(user => {
       if (user) {
         return bcrypt
-          .compare(signData.password, user.password)
+          .compare(password, user.password)
           .then(res => {
-            if (res) {
-              logger.info('User exists and passwords are matching');
-              return Promise.resolve();
+            if (!res) {
+              throw errors.badRequestError('Wrong password!');
             }
-            return Promise.reject(errors.badRequestError('Wrong password!'));
+            logger.info('User exists and passwords are matching');
           })
-          .catch(error => Promise.reject(errors.badRequestError(error.message)));
+          .catch(error => {
+            throw errors.badRequestError(error.message);
+          });
       }
       logger.error('Email does not exists');
-      return Promise.reject(errors.badRequestError('No user with that email'));
+      throw errors.badRequestError('No user with that email');
     })
-    .catch(error => Promise.reject(errors.badRequestError(error.message)));
+    .catch(error => {
+      throw errors.badRequestError(error.message);
+    });
 };
