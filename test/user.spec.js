@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 const { User } = require('../app/models');
-const { userTest } = require('./constants');
+const { userTest } = require('./utils');
 const lodash = require('lodash');
 
 describe('User Creation', () => {
