@@ -75,7 +75,7 @@ describe('User Sign-In', () => {
         expect(res.body.message).toEqual('No user with that email');
       }));
 
-  it.only('Responds with bad request error for wrong password (passwords does not match)', () =>
+  it('Responds with bad request error for wrong password (passwords does not match)', () =>
     request(app)
       .post('/users')
       .send(userTest)
