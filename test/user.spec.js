@@ -79,7 +79,7 @@ describe('User Sign-In', () => {
       .post('/users/sessions')
       .send(signIn)
       .then(res => {
-        expect(res.statusCode).toEqual(503);
+        expect(res.statusCode).toEqual(400);
         expect(res.body.message).toEqual('No user with that email');
       }));
 
@@ -92,7 +92,7 @@ describe('User Sign-In', () => {
           .post('/users/sessions')
           .send({ ...signIn, password: 'wrongpassword123' })
           .then(res => {
-            expect(res.statusCode).toEqual(503);
+            expect(res.statusCode).toEqual(400);
             expect(res.body.message).toEqual('Wrong password!');
           })
       ));
