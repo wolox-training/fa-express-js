@@ -16,7 +16,7 @@ describe('User Creation', () => {
       .post('/users')
       .send(user)
       .then(res => {
-        expect(res.statusCode).toStrictEqual(200);
+        expect(res.statusCode).toBe(200);
         return User.findOne({ where: { email: user.email } }).then(userData => {
           expect(lodash.pick(userData, ['name', 'last_name', 'email'])).toStrictEqual(
             lodash.pick(user, ['name', 'last_name', 'email'])
@@ -33,8 +33,8 @@ describe('User Creation', () => {
           .post('/users')
           .send(user)
           .then(res => {
-            expect(res.statusCode).toStrictEqual(400);
-            expect(res.body.message).toStrictEqual('Email must be unique');
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('Email must be unique');
           })
       ));
 
@@ -43,8 +43,8 @@ describe('User Creation', () => {
       .post('/users')
       .send({ ...user, password: 'holamundo' })
       .then(res => {
-        expect(res.statusCode).toStrictEqual(400);
-        expect(res.body.message).toStrictEqual(
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe(
           'The password must have letters and numbers and has to be at least 8 chars long'
         );
       }));
@@ -54,8 +54,8 @@ describe('User Creation', () => {
       .post('/users')
       .send({ ...user, name: '' })
       .then(res => {
-        expect(res.statusCode).toStrictEqual(400);
-        expect(res.body.message).toStrictEqual('The name cannot be empty');
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('The name cannot be empty');
       }));
 });
 
@@ -69,7 +69,7 @@ describe('User Sign-In', () => {
           .post('/users/sessions')
           .send(signInData)
           .then(res => {
-            expect(res.statusCode).toStrictEqual(200);
+            expect(res.statusCode).toBe(200);
             expect(jwt.decode(res.body.token, secret).username).toStrictEqual('joedoe@wolox.co');
           })
       ));
@@ -79,8 +79,8 @@ describe('User Sign-In', () => {
       .post('/users/sessions')
       .send(signInData)
       .then(res => {
-        expect(res.statusCode).toStrictEqual(400);
-        expect(res.body.message).toStrictEqual('No user with that email');
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('No user with that email');
       }));
 
   it('Responds with bad request error for wrong password (passwords does not match)', () =>
@@ -92,8 +92,8 @@ describe('User Sign-In', () => {
           .post('/users/sessions')
           .send({ ...signInData, password: 'wrongpassword123' })
           .then(res => {
-            expect(res.statusCode).toStrictEqual(400);
-            expect(res.body.message).toStrictEqual('Wrong password!');
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('Wrong password!');
           })
       ));
 });
