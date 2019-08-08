@@ -5,7 +5,7 @@ exports.user = {
   password: 'holamundo2019'
 };
 
-exports.signInTest = {
+exports.signIn = {
   email: 'joedoe@wolox.co',
   password: 'holamundo2019'
 };
