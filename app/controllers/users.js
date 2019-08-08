@@ -26,7 +26,7 @@ exports.signIn = (req, res, next) =>
               next(errors.badRequestError('Wrong password!'));
             }
             logger.info('User exists and passwords are matching');
-            const token = jwt.encode({ username: req.body.email }, secret);
+            const token = jwt.encode({ email: req.body.email }, secret);
             return res.send({ token });
           })
           .catch(error => next(errors.badRequestError(error.message)));
