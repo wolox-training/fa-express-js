@@ -34,6 +34,7 @@ exports.signInUser = ({ email, password }) => {
       throw errors.badRequestError('No user with that email');
     })
     .catch(error => {
-      throw errors.badRequestError(error.message);
+      logger.error(`Database Error: ${error.message}`);
+      throw errors.databaseError(error.message);
     });
 };
