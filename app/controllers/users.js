@@ -1,4 +1,4 @@
-const { createUser, signInUser } = require('../services/users');
+const { createUser, findUser } = require('../services/users');
 const jwt = require('jwt-simple');
 const lodash = require('lodash');
 const logger = require('../logger');
@@ -16,14 +16,14 @@ exports.createUser = (req, res, next) =>
     .catch(next);
 
 exports.signIn = (req, res, next) =>
-  signInUser(req.body)
+  findUser(req.body)
     .then(user => {
       if (user) {
         return bcrypt
           .compare(req.body.password, user.password)
           .then(passwordExists => {
             if (!passwordExists) {
-              next(errors.badRequestError('Wrong password!'));
+              return next(errors.badRequestError('Wrong password!'));
             }
             logger.info('User exists and passwords are matching');
             const token = jwt.encode({ username: req.body.email }, secret);

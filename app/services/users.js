@@ -10,7 +10,7 @@ exports.createUser = user =>
     return User.create(user).catch(error => Promise.reject(errors.databaseError(error.message)));
   });
 
-exports.signInUser = ({ email }) => {
+exports.findUser = ({ email }) => {
   logger.info(`Trying to sign-in the user with email: ${email}`);
   return User.findOne({
     where: {

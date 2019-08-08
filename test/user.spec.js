@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 const { User } = require('../app/models');
-const { user, signIn } = require('./utils');
+const { user, signInData } = require('./utils');
 const lodash = require('lodash');
 const jwt = require('jwt-simple');
 const {
@@ -67,17 +67,17 @@ describe('User Sign-In', () => {
       .then(() =>
         request(app)
           .post('/users/sessions')
-          .send(signIn)
+          .send(signInData)
           .then(res => {
             expect(res.statusCode).toEqual(200);
-            expect(jwt.decode(res.body.token, secret).username).toEqual(signIn.email);
+            expect(jwt.decode(res.body.token, secret).username).toEqual('joedoe@wolox.co');
           })
       ));
 
   it('Responds with bad request error when the email does not exists in the database', () =>
     request(app)
       .post('/users/sessions')
-      .send(signIn)
+      .send(signInData)
       .then(res => {
         expect(res.statusCode).toEqual(400);
         expect(res.body.message).toEqual('No user with that email');
@@ -90,7 +90,7 @@ describe('User Sign-In', () => {
       .then(() =>
         request(app)
           .post('/users/sessions')
-          .send({ ...signIn, password: 'wrongpassword123' })
+          .send({ ...signInData, password: 'wrongpassword123' })
           .then(res => {
             expect(res.statusCode).toEqual(400);
             expect(res.body.message).toEqual('Wrong password!');
