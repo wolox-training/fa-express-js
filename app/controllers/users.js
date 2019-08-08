@@ -1,5 +1,5 @@
 const { createUser, signInUser } = require('../services/users');
-const jwt = require('jsonwebtoken');
+const jwt = require('jwt-simple');
 const { SECRET } = require('../constants');
 const lodash = require('lodash');
 
@@ -11,7 +11,7 @@ exports.createUser = (req, res, next) =>
 exports.signIn = (req, res, next) =>
   signInUser(req.body)
     .then(() => {
-      const token = jwt.sign({ username: req.body.email }, SECRET);
+      const token = jwt.encode({ username: req.body.email }, SECRET);
       res.send({ token });
     })
     .catch(next);
