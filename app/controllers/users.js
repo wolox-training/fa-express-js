@@ -1,7 +1,14 @@
 const { createUser, signInUser } = require('../services/users');
 const jwt = require('jwt-simple');
-const { SECRET } = require('../constants');
 const lodash = require('lodash');
+const logger = require('../logger');
+const {
+  common: {
+    session: { secret }
+  }
+} = require('../../config');
+const errors = require('../errors');
+const bcrypt = require('bcryptjs');
 
 exports.createUser = (req, res, next) =>
   createUser(req.body)
@@ -10,8 +17,24 @@ exports.createUser = (req, res, next) =>
 
 exports.signIn = (req, res, next) =>
   signInUser(req.body)
-    .then(() => {
-      const token = jwt.encode({ username: req.body.email }, SECRET);
-      res.send({ token });
+    .then(user => {
+      if (user) {
+        return bcrypt
+          .compare(req.body.password, user.password)
+          .then(passwordExists => {
+            if (!passwordExists) {
+              next(errors.badRequestError('Wrong password!'));
+            }
+            logger.info('User exists and passwords are matching');
+            const token = jwt.encode({ username: req.body.email }, secret);
+            return res.send({ token });
+          })
+          .catch(error => next(errors.badRequestError(error.message)));
+      }
+      logger.error('Email does not exists');
+      return next(errors.badRequestError('No user with that email'));
     })
-    .catch(next);
+    .catch(error => {
+      logger.error(`Database Error: ${error.message}`);
+      return next(errors.databaseError(error.message));
+    });

@@ -54,7 +54,7 @@ exports.signInSchema = {
 
     isLength: {
       options: { min: 9 },
-      errorMessage: errors.badRequestError('The email cannot be empty')
+      errorMessage: errors.badRequestError('The email cannot be less than 9 characters')
     }
   },
 

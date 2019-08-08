@@ -4,7 +4,12 @@ const { User } = require('../app/models');
 const { user, signIn } = require('./utils');
 const lodash = require('lodash');
 const jwt = require('jwt-simple');
-const { SECRET } = require('../app/constants');
+const {
+  common: {
+    session: { secret }
+  }
+} = require('../config');
+
 describe('User Creation', () => {
   it('Responds with success when params are right and user is created correctly', () =>
     request(app)
@@ -65,7 +70,7 @@ describe('User Sign-In', () => {
           .send(signIn)
           .then(res => {
             expect(res.statusCode).toEqual(200);
-            expect(jwt.decode(res.body.token, SECRET).username).toEqual(signIn.email);
+            expect(jwt.decode(res.body.token, secret).username).toEqual(signIn.email);
           })
       ));
 
