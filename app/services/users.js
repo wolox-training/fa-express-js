@@ -18,5 +18,5 @@ exports.findUser = params =>
     if (user) {
       return Promise.resolve(user);
     }
-    return Promise.reject(errors.badRequestError('No User with that email'));
+    return Promise.reject(errors.badRequestError('No user with that email'));
   });
