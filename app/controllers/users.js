@@ -1,14 +1,7 @@
 const { createUser, findUser } = require('../services/users');
-const jwt = require('jwt-simple');
 const lodash = require('lodash');
 const logger = require('../logger');
-const {
-  common: {
-    session: { secret }
-  }
-} = require('../../config');
-const errors = require('../errors');
-const bcrypt = require('bcryptjs');
+const { validatePassword } = require('../utils/helpers');
 
 exports.createUser = (req, res, next) =>
   createUser(req.body)
@@ -16,25 +9,11 @@ exports.createUser = (req, res, next) =>
     .catch(next);
 
 exports.signIn = (req, res, next) =>
-  findUser(req.body)
+  findUser({ email: req.body.email })
     .then(user => {
-      if (user) {
-        return bcrypt
-          .compare(req.body.password, user.password)
-          .then(passwordExists => {
-            if (!passwordExists) {
-              return next(errors.badRequestError('Wrong password!'));
-            }
-            logger.info('User exists and passwords are matching');
-            const token = jwt.encode({ username: req.body.email }, secret);
-            return res.send({ token });
-          })
-          .catch(error => next(errors.badRequestError(error.message)));
-      }
-      logger.error('Email does not exists');
-      return next(errors.badRequestError('No user with that email'));
+      logger.info(`Trying to sign-in the user with email: ${user.email}`);
+      return validatePassword(user.password, req.body)
+        .then(token => res.send(token))
+        .catch(next);
     })
-    .catch(error => {
-      logger.error(`Database Error: ${error.message}`);
-      return next(errors.databaseError(error.message));
-    });
+    .catch(next);

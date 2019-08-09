@@ -2,7 +2,6 @@ const { User } = require('../models');
 const errors = require('../errors');
 const bcrypt = require('bcryptjs');
 const { SALTROUNDS } = require('../constants');
-const logger = require('../logger');
 
 exports.createUser = user =>
   bcrypt.hash(user.password, SALTROUNDS).then(hash => {
@@ -10,11 +9,14 @@ exports.createUser = user =>
     return User.create(user).catch(error => Promise.reject(errors.databaseError(error.message)));
   });
 
-exports.findUser = ({ email }) => {
-  logger.info(`Trying to sign-in the user with email: ${email}`);
-  return User.findOne({
+exports.findUser = params =>
+  User.findOne({
     where: {
-      email
+      ...params
     }
+  }).then(user => {
+    if (user) {
+      return Promise.resolve(user);
+    }
+    return Promise.reject(errors.badRequestError('No User with that email'));
   });
-};
