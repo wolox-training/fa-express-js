@@ -110,11 +110,51 @@ describe('List Users', () => {
           .then(token =>
             request(app)
               .get('/users')
-              .set('authorization', `Bearer ${token}`)
+              .set('authorization', token.body.token)
               .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body.users.length).toBe(1);
               })
+          )
+      ));
+
+  it('Responds with bad request if the token is invalid', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            request(app)
+              .get('/users')
+              .set('authorization', `${token.body.token}invalid`)
+              .then(response => {
+                expect(response.status).toBe(401);
+                expect(response.body.message).toBe('Signature verification failed');
+              })
+          )
+      ));
+
+  it('Responds with bad request if the payload of the token is a user that does not exist', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            User.destroy({ where: { email: user.email } }).then(() =>
+              request(app)
+                .get('/users')
+                .set('authorization', `${token.body.token}`)
+                .then(response => {
+                  expect(response.status).toBe(401);
+                  expect(response.body.message).toBe('Invalid Token');
+                })
+            )
           )
       ));
 });
