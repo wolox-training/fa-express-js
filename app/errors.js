@@ -3,7 +3,7 @@ const internalError = (message, internalCode) => ({
   internalCode
 });
 
-exports.UNAUTHORIZED = 'default_error';
+exports.UNAUTHORIZED = 'unauthorized_error';
 exports.unauthorizedError = message => internalError(message, exports.UNAUTHORIZED);
 
 exports.BAD_REQUEST = 'bad_request';

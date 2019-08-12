@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 const { User } = require('../app/models');
-const { user, signIn } = require('./utils');
+const { user, signInData } = require('./utils');
 const lodash = require('lodash');
 const jwt = require('jwt-simple');
 const {
@@ -16,9 +16,9 @@ describe('User Creation', () => {
       .post('/users')
       .send(user)
       .then(res => {
-        expect(res.statusCode).toEqual(200);
+        expect(res.statusCode).toBe(200);
         return User.findOne({ where: { email: user.email } }).then(userData => {
-          expect(lodash.pick(userData, ['name', 'last_name', 'email'])).toEqual(
+          expect(lodash.pick(userData, ['name', 'last_name', 'email'])).toStrictEqual(
             lodash.pick(user, ['name', 'last_name', 'email'])
           );
         });
@@ -33,8 +33,8 @@ describe('User Creation', () => {
           .post('/users')
           .send(user)
           .then(res => {
-            expect(res.statusCode).toEqual(400);
-            expect(res.body.message).toEqual('Email must be unique');
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('Email must be unique');
           })
       ));
 
@@ -43,8 +43,8 @@ describe('User Creation', () => {
       .post('/users')
       .send({ ...user, password: 'holamundo' })
       .then(res => {
-        expect(res.statusCode).toEqual(400);
-        expect(res.body.message).toEqual(
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe(
           'The password must have letters and numbers and has to be at least 8 chars long'
         );
       }));
@@ -54,8 +54,8 @@ describe('User Creation', () => {
       .post('/users')
       .send({ ...user, name: '' })
       .then(res => {
-        expect(res.statusCode).toEqual(400);
-        expect(res.body.message).toEqual('The name cannot be empty');
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('The name cannot be empty');
       }));
 });
 
@@ -67,20 +67,20 @@ describe('User Sign-In', () => {
       .then(() =>
         request(app)
           .post('/users/sessions')
-          .send(signIn)
+          .send(signInData)
           .then(res => {
-            expect(res.statusCode).toEqual(200);
-            expect(jwt.decode(res.body.token, secret).username).toEqual(signIn.email);
+            expect(res.statusCode).toBe(200);
+            expect(jwt.decode(res.body.token, secret).email).toStrictEqual('joedoe@wolox.co');
           })
       ));
 
   it('Responds with bad request error when the email does not exists in the database', () =>
     request(app)
       .post('/users/sessions')
-      .send(signIn)
+      .send(signInData)
       .then(res => {
-        expect(res.statusCode).toEqual(400);
-        expect(res.body.message).toEqual('No user with that email');
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('No user with that email');
       }));
 
   it('Responds with bad request error for wrong password (passwords does not match)', () =>
@@ -90,10 +90,31 @@ describe('User Sign-In', () => {
       .then(() =>
         request(app)
           .post('/users/sessions')
-          .send({ ...signIn, password: 'wrongpassword123' })
+          .send({ ...signInData, password: 'wrongpassword123' })
           .then(res => {
-            expect(res.statusCode).toEqual(400);
-            expect(res.body.message).toEqual('Wrong password!');
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('Wrong password!');
           })
+      ));
+});
+
+describe('List Users', () => {
+  it('Responds with success when the auth token is valid and the user exists in the database', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            request(app)
+              .get('/users')
+              .set('authorization', `Bearer ${token}`)
+              .then(response => {
+                expect(response.status).toBe(200);
+                expect(response.body.users.length).toBe(1);
+              })
+          )
       ));
 });
