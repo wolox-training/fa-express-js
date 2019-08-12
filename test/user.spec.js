@@ -9,6 +9,7 @@ const {
     session: { secret }
   }
 } = require('../config');
+const { createManyUsers } = require('./utils');
 
 describe('User Creation', () => {
   it('Responds with success when params are right and user is created correctly', () =>
@@ -153,6 +154,28 @@ describe('List Users', () => {
                 .then(response => {
                   expect(response.status).toBe(401);
                   expect(response.body.message).toBe('Invalid Token');
+                })
+            )
+          )
+      ));
+
+  it('Responds with success, body with two pages and six users per page', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            createManyUsers(10).then(() =>
+              request(app)
+                .get('/users')
+                .set('authorization', token.body.token)
+                .then(response => {
+                  expect(response.status).toBe(200);
+                  expect(response.body.pages).toBe(2);
+                  expect(response.body.users.length).toBe(6);
                 })
             )
           )
