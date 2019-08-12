@@ -80,7 +80,7 @@ describe('User Sign-In', () => {
       .send(signInData)
       .then(res => {
         expect(res.statusCode).toBe(400);
-        expect(res.body.message).toBe('No user with that email');
+        expect(res.body.message).toBe('There is no user with that email');
       }));
 
   it('Responds with bad request error for wrong password (passwords does not match)', () =>
