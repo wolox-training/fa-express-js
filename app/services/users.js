@@ -16,11 +16,9 @@ exports.findUser = params =>
     throw errors.databaseError(error.message);
   });
 
-exports.getUsers = (page, limit) => {
-  const offset = page * limit;
-  return User.findAndCountAll({
+exports.getUsers = (offset, limit) =>
+  User.findAndCountAll({
     limit,
     offset,
     attributes: ['name', 'last_name', 'email']
   });
-};

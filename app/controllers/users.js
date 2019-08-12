@@ -3,7 +3,7 @@ const lodash = require('lodash');
 const logger = require('../logger');
 const { validatePassword } = require('../utils/helpers');
 const errors = require('../errors');
-const { PAGESIZE } = require('../constants');
+const { PAGESIZE, FIRSTPAGE } = require('../constants');
 
 exports.createUser = (req, res, next) =>
   createUser(req.body)
@@ -27,8 +27,9 @@ exports.signIn = (req, res, next) =>
 
 exports.listUsers = (req, res, next) => {
   const limit = req.query.limit || PAGESIZE;
-  const page = req.query.page || 1;
-  return getUsers(page - 1, limit)
+  const page = req.query.page || FIRSTPAGE;
+  const offset = page * limit;
+  return getUsers(offset, limit)
     .then(users => res.send({ pages: Math.ceil(users.count / limit), users: users.rows }))
     .catch(error => next(errors.databaseError(error.message)));
 };
