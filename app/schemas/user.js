@@ -43,3 +43,28 @@ exports.userSchema = {
     }
   }
 };
+
+exports.signInSchema = {
+  email: {
+    in: ['body'],
+    matches: {
+      options: /^[a-zA-Z0-9]+@wolox.([A-Za-z])+$/,
+      errorMessage: errors.badRequestError('The email must have the wolox domain')
+    },
+
+    isLength: {
+      options: { min: 9 },
+      errorMessage: errors.badRequestError('The email cannot be less than 9 characters')
+    }
+  },
+
+  password: {
+    in: ['body'],
+    matches: {
+      options: /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
+      errorMessage: errors.badRequestError(
+        'The password must have letters and numbers and has to be at least 8 chars long'
+      )
+    }
+  }
+};

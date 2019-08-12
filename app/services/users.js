@@ -8,3 +8,10 @@ exports.createUser = user =>
     user.password = hash;
     return User.create(user).catch(error => Promise.reject(errors.databaseError(error.message)));
   });
+
+exports.findUser = params =>
+  User.findOne({
+    where: params
+  }).catch(error => {
+    throw errors.databaseError(error.message);
+  });

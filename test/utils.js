@@ -4,3 +4,8 @@ exports.user = {
   email: 'joedoe@wolox.co',
   password: 'holamundo2019'
 };
+
+exports.signInData = {
+  email: 'joedoe@wolox.co',
+  password: 'holamundo2019'
+};
