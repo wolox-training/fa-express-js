@@ -10,7 +10,6 @@ const { findUser } = require('../services/users');
 exports.checkSession = (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.replace('Bearer ', '');
-    console.log(jwt.decode(token, secret));
     findUser({ email: jwt.decode(token, secret).email }).catch(next);
     return next();
   }

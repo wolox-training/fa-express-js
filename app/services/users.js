@@ -23,7 +23,6 @@ exports.findUser = params =>
 
 exports.getUsers = (page, limit) => {
   const offset = page * limit;
-  console.log(limit);
   return User.findAndCountAll({
     limit,
     offset,
