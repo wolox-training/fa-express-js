@@ -11,14 +11,9 @@ exports.createUser = user =>
 
 exports.findUser = params =>
   User.findOne({
-    where: {
-      ...params
-    }
-  }).then(user => {
-    if (user) {
-      return Promise.resolve(user);
-    }
-    return Promise.reject(errors.badRequestError('No user with that email'));
+    where: params
+  }).catch(error => {
+    throw errors.databaseError(error.message);
   });
 
 exports.getUsers = (page, limit) => {

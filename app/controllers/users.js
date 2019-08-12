@@ -13,10 +13,15 @@ exports.createUser = (req, res, next) =>
 exports.signIn = (req, res, next) =>
   findUser({ email: req.body.email })
     .then(user => {
-      logger.info(`Trying to sign-in the user with email: ${user.email}`);
-      return validatePassword(user.password, req.body)
-        .then(token => res.send(token))
-        .catch(next);
+      if (user) {
+        logger.info(`Trying to sign-in the user with email: ${user.email}`);
+        return validatePassword(user.password, req.body)
+          .then(token => res.send(token))
+          .catch(error => {
+            throw errors.badRequestError(error.message);
+          });
+      }
+      throw errors.badRequestError('There is no user with that email');
     })
     .catch(next);
 
