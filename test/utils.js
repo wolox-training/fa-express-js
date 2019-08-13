@@ -16,7 +16,7 @@ exports.signInData = {
 factory.define('user', User, {
   name: () => faker.name.firstName(),
   last_name: () => faker.name.lastName(),
-  email: () => faker.internet.email(this.firstName, this.lastName, 'wolox.co'),
+  email: () => faker.internet.email(this.name, this.last_name, 'wolox.co'),
   password: () => faker.internet.password()
 });
 
