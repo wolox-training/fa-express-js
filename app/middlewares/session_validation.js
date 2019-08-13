@@ -22,3 +22,17 @@ exports.checkSession = (req, _, next) => {
     next(errors.unauthorizedError(error.message));
   }
 };
+
+exports.checkAdmin = (req, _, next) => {
+  const token = req.headers.authorization;
+  try {
+    const { admin } = jwt.decode(token, secret);
+    if (admin) {
+      next();
+    } else {
+      next(errors.unauthorizedError('You dont have permissions for this request'));
+    }
+  } catch (error) {
+    next(errors.unauthorizedError(error.message));
+  }
+};

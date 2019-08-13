@@ -9,7 +9,8 @@ const {
     session: { secret }
   }
 } = require('../config');
-const { createManyUsers } = require('./utils');
+const { createManyUsers, buildUser } = require('./utils');
+const { updateUser } = require('../app/services/users');
 
 describe('User Creation', () => {
   it('Responds with success when params are right and user is created correctly', () =>
@@ -180,4 +181,31 @@ describe('List Users', () => {
             )
           )
       ));
+});
+
+describe('Sign-up an user with admin permissions', () => {
+  it(`Responds with success when the auth token is valid for admin 
+  requests and creates a new user with admin permissions`, () =>
+    buildUser().then(localUser =>
+      request(app)
+        .post('/users')
+        .send(localUser.dataValues)
+        .then(() =>
+          updateUser(localUser, { admin: true }).then(() =>
+            request(app)
+              .post('/users/sessions')
+              .send({ email: localUser.email, password: localUser.password })
+              .then(token =>
+                request(app)
+                  .post('/admin/users')
+                  .send(user)
+                  .set('authorization', token.body.token)
+                  .then(response => {
+                    expect(response.status).toBe(300);
+                    expect(response.body.admin).toBe(true);
+                  })
+              )
+          )
+        )
+    ));
 });

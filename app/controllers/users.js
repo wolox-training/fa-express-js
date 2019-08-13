@@ -1,4 +1,4 @@
-const { createUser, findUser, getUsers } = require('../services/users');
+const { createUser, findUser, getUsers, updateUser } = require('../services/users');
 const lodash = require('lodash');
 const logger = require('../logger');
 const { validatePassword } = require('../utils/helpers');
@@ -15,7 +15,7 @@ exports.signIn = (req, res, next) =>
     .then(user => {
       if (user) {
         logger.info(`Trying to sign-in the user with email: ${user.email}`);
-        return validatePassword(user.password, req.body)
+        return validatePassword(user, req.body)
           .then(token => res.send(token))
           .catch(error => {
             throw errors.badRequestError(error.message);
@@ -32,4 +32,20 @@ exports.listUsers = (req, res, next) => {
   return getUsers(offset, limit)
     .then(users => res.send({ pages: Math.ceil(users.count / limit), users: users.rows }))
     .catch(error => next(errors.databaseError(error.message)));
+};
+
+exports.createAdmin = (req, res, next) => {
+  findUser({ email: req.body.email })
+    .then(user => {
+      if (user) {
+        updateUser(user, { admin: true })
+          .then(updatedUser => res.send(lodash.pick(updatedUser, ['name', 'last_name', 'email', 'admin'])))
+          .catch(error => next(errors.badRequestError(error.message)));
+      } else {
+        createUser({ ...req.body, admin: true })
+          .then(adminUser => res.send(lodash.pick(adminUser, ['name', 'last_name', 'email', 'admin'])))
+          .catch(error => next(errors.badRequestError(error.message)));
+      }
+    })
+    .catch(error => next(error.badRequestError(error.message)));
 };
