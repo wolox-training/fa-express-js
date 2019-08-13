@@ -13,13 +13,15 @@ exports.checkSession = (req, _, next) => {
     if (token) {
       const { email } = jwt.decode(token, secret);
       if (email) {
-        findUser({ email }).then(user => (user ? next() : next(errors.unauthorizedError('Invalid Token'))));
+        return findUser({ email }).then(user =>
+          user ? next() : next(errors.unauthorizedError('Invalid Token'))
+        );
       }
-    } else {
-      throw errors.unauthorizedError('Invalid Token');
+      return next(errors.unauthorizedError('Invalid Token'));
     }
+    throw next(errors.unauthorizedError('Invalid Token'));
   } catch (error) {
-    next(errors.unauthorizedError(error.message));
+    return next(errors.unauthorizedError(error.message));
   }
 };
 
