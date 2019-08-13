@@ -12,7 +12,6 @@ exports.validatePassword = (dbUser, user) =>
   bcrypt
     .compare(user.password, dbUser.password)
     .then(passwordExists => {
-      console.log('USER PASSWORD', user.password, 'USERDATA', dbUser.password);
       if (!passwordExists) {
         return Promise.reject(errors.badRequestError('Wrong password!'));
       }
