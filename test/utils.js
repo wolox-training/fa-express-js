@@ -17,7 +17,6 @@ factory.define('user', User, {
   name: () => faker.name.firstName(),
   last_name: () => faker.name.lastName(),
   email: () => faker.internet.email(this.firstName, this.lastName, 'wolox.co'),
-  username: () => faker.internet.email(),
   password: () => faker.internet.password()
 });
 
