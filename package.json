@@ -22,7 +22,7 @@
     "migrations": "sequelize db:migrate",
     "start": "nodemon --inspect server.js",
     "migrations-test": "NODE_ENV=testing  sequelize db:migrate",
-    "migrations-production": "NODE_ENV=production  sequelize db:migrate"
+    "migrations-production": "NODE_ENV=production sequelize db:migrate"
   },
   "cacheDirectories": [
     "node_modules"
