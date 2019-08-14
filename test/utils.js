@@ -21,5 +21,6 @@ factory.define('user', User, {
 });
 
 exports.createManyUsers = size => factory.createMany('user', size);
-exports.createUser = () => factory.create('user');
-exports.buildUser = () => factory.build('user');
+exports.createUser = factoryName => factory.create(factoryName ? factoryName : 'user');
+exports.buildUser = factoryName => factory.build(factoryName ? factoryName : 'user');
+exports.extendUser = (modelName, params) => factory.extend('user', modelName, params);
