@@ -114,7 +114,9 @@ describe('List Users', () => {
               .set('authorization', token.body.token)
               .then(response => {
                 expect(response.status).toBe(200);
-                expect(response.body.users.length).toBe(1);
+                expect(response.body.users[0]).toStrictEqual(
+                  lodash.pick(user, ['email', 'name', 'last_name'])
+                );
               })
           )
       ));

@@ -13,11 +13,11 @@ exports.signInData = {
   password: 'holamundo2019'
 };
 
-factory.define('user', User, {
+factory.define('randomUser', User, {
   name: () => faker.name.firstName(),
   last_name: () => faker.name.lastName(),
   email: () => faker.internet.email(this.name, this.last_name, 'wolox.co'),
   password: () => faker.internet.password()
 });
 
-exports.createManyUsers = size => factory.createMany('user', size);
+exports.createManyUsers = size => factory.createMany('randomUser', size);

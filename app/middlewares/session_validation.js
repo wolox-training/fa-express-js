@@ -7,19 +7,21 @@ const {
 } = require('../../config');
 const { findUser } = require('../services/users');
 
-exports.checkSession = (req, _, next) => {
+exports.checkSession = async (req, _, next) => {
   const token = req.headers.authorization;
   try {
     if (token) {
       const { email } = jwt.decode(token, secret);
       if (email) {
-        return findUser({ email }).then(user =>
-          user ? next() : next(errors.unauthorizedError('Invalid Token'))
-        );
+        const user = await findUser({ email });
+        if (user) {
+          return next();
+        }
+        throw errors.unauthorizedError('Invalid Token');
       }
-      return next(errors.unauthorizedError('Invalid Token'));
+      throw errors.unauthorizedError('Invalid Token');
     }
-    throw next(errors.unauthorizedError('Invalid Token'));
+    throw errors.unauthorizedError('Invalid Token');
   } catch (error) {
     return next(errors.unauthorizedError(error.message));
   }
