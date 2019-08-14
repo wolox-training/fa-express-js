@@ -134,7 +134,7 @@ describe('List Users', () => {
               .get('/users')
               .set('authorization', `${token.body.token}invalid`)
               .then(response => {
-                expect(response.status).toBe(401);
+                expect(response.status).toBe(503);
                 expect(response.body.message).toBe('Signature verification failed');
               })
           )
