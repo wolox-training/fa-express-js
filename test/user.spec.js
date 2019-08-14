@@ -140,7 +140,7 @@ describe('List Users', () => {
           )
       ));
 
-  it('Responds with bad request if the payload of the token is a user that does not exist', () =>
+  it('Responds with bad request if the payload of the token is an user that does not exist', () =>
     request(app)
       .post('/users')
       .send(user)
