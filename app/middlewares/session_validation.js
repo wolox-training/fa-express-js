@@ -17,12 +17,12 @@ exports.checkSession = async (req, _, next) => {
         if (user) {
           return next();
         }
-        throw errors.unauthorizedError('Invalid Token');
+        return next(errors.unauthorizedError('Invalid Token'));
       }
-      throw errors.unauthorizedError('Invalid Token');
+      return next(errors.unauthorizedError('Invalid Token'));
     }
-    throw errors.unauthorizedError('Invalid Token');
+    return next(errors.unauthorizedError('Invalid Token'));
   } catch (error) {
-    return next(errors.unauthorizedError(error.message));
+    return next(errors.databaseError(error.message));
   }
 };
