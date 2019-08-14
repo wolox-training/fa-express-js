@@ -13,14 +13,14 @@ exports.signInData = {
   password: 'holamundo2019'
 };
 
-factory.define('user', User, {
+factory.define('randomUser', User, {
   name: () => faker.name.firstName(),
   last_name: () => faker.name.lastName(),
   email: () => faker.internet.email(this.name, this.last_name, 'wolox.co'),
   password: () => faker.internet.password()
 });
 
-exports.createManyUsers = size => factory.createMany('user', size);
-exports.createUser = factoryName => factory.create(factoryName ? factoryName : 'user');
-exports.buildUser = factoryName => factory.build(factoryName ? factoryName : 'user');
-exports.extendUser = (modelName, params) => factory.extend('user', modelName, params);
+exports.createManyUsers = size => factory.createMany('randomUser', size);
+exports.createUser = factoryName => factory.create(factoryName ? factoryName : 'randomUser');
+exports.buildUser = factoryName => factory.build(factoryName ? factoryName : 'randomUser');
+exports.extendUser = (modelName, params) => factory.extend('randomUser', modelName, params);

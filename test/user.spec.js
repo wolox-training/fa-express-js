@@ -115,7 +115,9 @@ describe('List Users', () => {
               .set('authorization', token.body.token)
               .then(response => {
                 expect(response.status).toBe(200);
-                expect(response.body.users.length).toBe(1);
+                expect(response.body.users[0]).toStrictEqual(
+                  lodash.pick(user, ['email', 'name', 'last_name'])
+                );
               })
           )
       ));
@@ -139,7 +141,7 @@ describe('List Users', () => {
           )
       ));
 
-  it('Responds with bad request if the payload of the token is a user that does not exist', () =>
+  it('Responds with bad request if the payload of the token is an user that does not exist', () =>
     request(app)
       .post('/users')
       .send(user)

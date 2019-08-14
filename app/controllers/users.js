@@ -30,7 +30,7 @@ exports.listUsers = (req, res, next) => {
   const page = req.query.page || FIRSTPAGE;
   const offset = page * limit;
   return getUsers(offset, limit)
-    .then(users => res.send({ pages: Math.ceil(users.count / limit), users: users.rows }))
+    .then(({ count, rows }) => res.send({ pages: Math.ceil(count / limit), users: rows }))
     .catch(error => next(errors.databaseError(error.message)));
 };
 
