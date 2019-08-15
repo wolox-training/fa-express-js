@@ -38,14 +38,15 @@ exports.createAdmin = (req, res, next) => {
   findUser({ email: req.body.email })
     .then(user => {
       if (user) {
-        updateUser(user, { ...req.body, admin: true })
+        logger.info('User exists, updating values and setting admin permissions to true');
+        return updateUser(user, { ...req.body, admin: true })
           .then(updatedUser => res.send(lodash.pick(updatedUser, ['name', 'last_name', 'email', 'admin'])))
           .catch(error => next(errors.badRequestError(error.message)));
-      } else {
-        createUser({ ...req.body, admin: true })
-          .then(adminUser => res.send(lodash.pick(adminUser, ['name', 'last_name', 'email', 'admin'])))
-          .catch(error => next(errors.badRequestError(error.message)));
       }
+      logger.info('User does not exist, creating a new admin user');
+      return createUser({ ...req.body, admin: true })
+        .then(adminUser => res.send(lodash.pick(adminUser, ['name', 'last_name', 'email', 'admin'])))
+        .catch(error => next(errors.badRequestError(error.message)));
     })
     .catch(error => next(error.badRequestError(error.message)));
 };
