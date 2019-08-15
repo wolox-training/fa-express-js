@@ -20,3 +20,11 @@ exports.validatePassword = (dbUser, user) =>
       return Promise.resolve({ token });
     })
     .catch(error => Promise.reject(errors.badRequestError(error.message)));
+
+exports.decodeJwt = token => {
+  try {
+    return jwt.decode(token, secret);
+  } catch (error) {
+    throw errors.unauthorizedError(error.message);
+  }
+};
