@@ -34,7 +34,7 @@ exports.listUsers = (req, res, next) => {
     .catch(error => next(errors.databaseError(error.message)));
 };
 
-exports.createAdmin = (req, res, next) => {
+exports.createAdminUser = (req, res, next) => {
   findUser({ email: req.body.email })
     .then(user => {
       if (user) {

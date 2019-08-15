@@ -22,7 +22,7 @@ exports.checkSession = async (req, _, next) => {
   }
 };
 
-exports.checkAdmin = (req, _, next) => {
+exports.checkAdminPermissions = (req, _, next) => {
   const token = req.headers.authorization;
   try {
     const { admin } = decodeJwt(token);
