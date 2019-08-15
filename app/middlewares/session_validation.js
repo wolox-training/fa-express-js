@@ -23,6 +23,6 @@ exports.checkSession = async (req, _, next) => {
     }
     return next(errors.unauthorizedError('Invalid Token'));
   } catch (error) {
-    return next(errors.databaseError(error.message));
+    return next(error);
   }
 };
