@@ -12,5 +12,5 @@ exports.init = app => {
   app.post('/users/sessions', [validateSchema(signInSchema)], signIn);
   app.post('/users', [validateSchema(userSchema)], createUser);
   app.get('/users', checkSession, listUsers);
-  app.post('/admin/users', [validateSchema(adminSchema), checkSession, checkAdmin], createAdmin);
+  app.post('/admin/users', [checkSession, checkAdmin, validateSchema(adminSchema)], createAdmin);
 };

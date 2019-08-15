@@ -38,7 +38,7 @@ exports.createAdmin = (req, res, next) => {
   findUser({ email: req.body.email })
     .then(user => {
       if (user) {
-        updateUser(user, { admin: true })
+        updateUser(user, { ...req.body, admin: true })
           .then(updatedUser => res.send(lodash.pick(updatedUser, ['name', 'last_name', 'email', 'admin'])))
           .catch(error => next(errors.badRequestError(error.message)));
       } else {

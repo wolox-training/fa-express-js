@@ -25,13 +25,12 @@ exports.checkSession = async (req, _, next) => {
 exports.checkAdmin = (req, _, next) => {
   const token = req.headers.authorization;
   try {
-    const { admin } = jwt.decode(token, secret);
+    const { admin } = decodeJwt(token);
     if (admin) {
-      next();
-    } else {
-      next(errors.unauthorizedError('You dont have permissions for this request'));
+      return next();
     }
+    throw errors.unauthorizedError('You dont have permissions for this request');
   } catch (error) {
-    next(errors.unauthorizedError(error.message));
+    return next(error);
   }
 };
