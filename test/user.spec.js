@@ -9,6 +9,7 @@ const {
     session: { secret }
   }
 } = require('../config');
+const { createManyUsers } = require('./utils');
 
 describe('User Creation', () => {
   it('Responds with success when params are right and user is created correctly', () =>
@@ -70,7 +71,7 @@ describe('User Sign-In', () => {
           .send(signInData)
           .then(res => {
             expect(res.statusCode).toBe(200);
-            expect(jwt.decode(res.body.token, secret).username).toStrictEqual('joedoe@wolox.co');
+            expect(jwt.decode(res.body.token, secret).email).toStrictEqual('joedoe@wolox.co');
           })
       ));
 
@@ -95,5 +96,90 @@ describe('User Sign-In', () => {
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toBe('Wrong password!');
           })
+      ));
+});
+
+describe('List Users', () => {
+  it('Responds with success when the auth token is valid and the user exists in the database', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            request(app)
+              .get('/users')
+              .set('authorization', token.body.token)
+              .then(response => {
+                expect(response.status).toBe(200);
+                expect(response.body.users[0]).toStrictEqual(
+                  lodash.pick(user, ['email', 'name', 'last_name'])
+                );
+              })
+          )
+      ));
+
+  it('Responds with bad request if the token is invalid', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            request(app)
+              .get('/users')
+              .set('authorization', `${token.body.token}invalid`)
+              .then(response => {
+                expect(response.status).toBe(401);
+                expect(response.body.message).toBe('Signature verification failed');
+              })
+          )
+      ));
+
+  it('Responds with bad request if the payload of the token is an user that does not exist', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            User.destroy({ where: { email: user.email } }).then(() =>
+              request(app)
+                .get('/users')
+                .set('authorization', `${token.body.token}`)
+                .then(response => {
+                  expect(response.status).toBe(401);
+                  expect(response.body.message).toBe('Invalid Token');
+                })
+            )
+          )
+      ));
+
+  it('Responds with success, body with two pages and six users per page', () =>
+    request(app)
+      .post('/users')
+      .send(user)
+      .then(() =>
+        request(app)
+          .post('/users/sessions')
+          .send(signInData)
+          .then(token =>
+            createManyUsers(10).then(() =>
+              request(app)
+                .get('/users')
+                .set('authorization', token.body.token)
+                .then(response => {
+                  expect(response.status).toBe(200);
+                  expect(response.body.pages).toBe(2);
+                  expect(response.body.users.length).toBe(6);
+                })
+            )
+          )
       ));
 });

@@ -15,3 +15,10 @@ exports.findUser = params =>
   }).catch(error => {
     throw errors.databaseError(error.message);
   });
+
+exports.getUsers = (offset, limit) =>
+  User.findAndCountAll({
+    limit,
+    offset,
+    attributes: ['name', 'last_name', 'email']
+  });

@@ -1,8 +1,9 @@
-const { createUser, findUser } = require('../services/users');
+const { createUser, findUser, getUsers } = require('../services/users');
 const lodash = require('lodash');
 const logger = require('../logger');
 const { validatePassword } = require('../utils/helpers');
 const errors = require('../errors');
+const { PAGESIZE, FIRSTPAGE } = require('../constants');
 
 exports.createUser = (req, res, next) =>
   createUser(req.body)
@@ -23,3 +24,12 @@ exports.signIn = (req, res, next) =>
       throw errors.badRequestError('There is no user with that email');
     })
     .catch(next);
+
+exports.listUsers = (req, res, next) => {
+  const limit = req.query.limit || PAGESIZE;
+  const page = req.query.page || FIRSTPAGE;
+  const offset = page * limit;
+  return getUsers(offset, limit)
+    .then(({ count, rows }) => res.send({ pages: Math.ceil(count / limit), users: rows }))
+    .catch(error => next(errors.databaseError(error.message)));
+};
