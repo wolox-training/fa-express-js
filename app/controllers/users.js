@@ -39,7 +39,7 @@ exports.createAdminUser = (req, res, next) =>
     .then(user => {
       if (user) {
         logger.info('User exists, updating values and setting admin permissions to true');
-        return updateUser(user, { role: ROLES.admin })
+        return updateUser(user.dataValues.email, { role: ROLES.admin })
           .then(updatedUser => res.send(pick(updatedUser)))
           .catch(error => next(errors.badRequestError(error.message)));
       }

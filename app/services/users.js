@@ -23,4 +23,4 @@ exports.getUsers = (offset, limit) =>
     attributes: ['name', 'last_name', 'email']
   });
 
-exports.updateUser = (user, updateParams) => user.update(updateParams);
+exports.updateUser = (email, updateParams) => User.update(updateParams, { where: { email } });
