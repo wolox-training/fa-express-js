@@ -16,7 +16,7 @@ exports.validatePassword = (dbUser, user) =>
         return Promise.reject(errors.badRequestError('Wrong password!'));
       }
       logger.info('User exists and passwords are matching');
-      const token = jwt.encode({ email: user.email, admin: dbUser.admin }, secret);
+      const token = jwt.encode({ email: user.email, role: dbUser.role }, secret);
       return Promise.resolve({ token });
     })
     .catch(error => Promise.reject(errors.badRequestError(error.message)));

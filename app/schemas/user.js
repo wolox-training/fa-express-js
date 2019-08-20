@@ -70,7 +70,7 @@ exports.signInSchema = {
 };
 
 exports.adminSchema = {
-  ...this.userSchema,
+  ...exports.userSchema,
   email: {
     in: ['body'],
     matches: {

@@ -11,6 +11,7 @@ const {
 } = require('../config');
 const { createManyUsers, buildUser, extendUser, createUser } = require('./utils');
 const { findUser } = require('../app/services/users');
+const { ROLES } = require('../app/constants');
 
 describe('User Creation', () => {
   it('Responds with success when params are right and user is created correctly', () =>
@@ -188,9 +189,9 @@ describe('List Users', () => {
 describe('Sign-up an user with admin permissions', () => {
   it(`Responds with success when the auth token is valid for admin 
   requests and creates a new user with admin permissions`, () => {
-    extendUser('adminUser', { admin: true });
+    extendUser('adminUser', { role: 'admin' });
     return createUser('adminUser').then(admin => {
-      const token = jwt.encode({ email: admin.dataValues.email, admin: admin.dataValues.admin }, secret);
+      const token = jwt.encode({ email: admin.dataValues.email, role: admin.dataValues.role }, secret);
       return request(app)
         .post('/admin/users')
         .send(user)
@@ -198,7 +199,7 @@ describe('Sign-up an user with admin permissions', () => {
         .then(response =>
           findUser({ email: user.email }).then(foundUser => {
             expect(response.status).toBe(200);
-            expect(foundUser.dataValues.admin).toBe(true);
+            expect(foundUser.dataValues.role).toBe(ROLES.admin);
           })
         );
     });
@@ -228,7 +229,7 @@ describe('Sign-up an user with admin permissions', () => {
 
   it('Responds with success when token is valid and updates the admin value of the user created if it exists', () =>
     createUser('adminUser').then(admin => {
-      const token = jwt.encode({ email: admin.dataValues.email, admin: admin.dataValues.admin }, secret);
+      const token = jwt.encode({ email: admin.dataValues.email, role: admin.dataValues.role }, secret);
       return request(app)
         .post('/users')
         .send(user)
@@ -240,7 +241,7 @@ describe('Sign-up an user with admin permissions', () => {
             .then(response =>
               findUser({ email: user.email }).then(newAdmin => {
                 expect(response.status).toBe(200);
-                expect(newAdmin.dataValues.admin).toBe(true);
+                expect(newAdmin.dataValues.role).toBe(ROLES.admin);
               })
             )
         );
