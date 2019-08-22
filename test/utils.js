@@ -1,7 +1,7 @@
 const faker = require('faker');
 const { factory } = require('factory-girl');
 const { User } = require('../app/models');
-const defaultFactoryName = 'randomUser';
+
 exports.user = {
   name: 'Joe',
   last_name: 'Doe',
@@ -14,14 +14,15 @@ exports.signInData = {
   password: 'holamundo2019'
 };
 
-factory.define(defaultFactoryName, User, {
+factory.define('randomUser', User, {
   name: () => faker.name.firstName(),
   last_name: () => faker.name.lastName(),
   email: () => faker.internet.email(this.name, this.last_name, 'wolox.co'),
   password: () => faker.internet.password()
 });
 
-exports.createManyUsers = size => factory.createMany(defaultFactoryName, size);
+exports.createManyUsers = (size, factoryName = 'randomUser') => factory.createMany(factoryName, size);
 exports.createUser = (factoryName = 'randomUser') => factory.create(factoryName);
-exports.buildUser = factoryName => factory.build(factoryName ? factoryName : defaultFactoryName);
-exports.extendUser = (modelName, params) => factory.extend(defaultFactoryName, modelName, params);
+exports.buildUser = (factoryName = 'randomUser') => factory.build(factoryName);
+exports.extendUser = (modelName, params, factoryName = 'randomUser') =>
+  factory.extend(factoryName, modelName, params);
