@@ -4,10 +4,13 @@ const logger = require('../logger');
 const { validatePassword } = require('../utils/helpers');
 const errors = require('../errors');
 const { PAGESIZE, FIRSTPAGE, ROLES } = require('../constants');
-const pick = (object, params = ['name', 'last_name', 'email', 'role']) => lodash.pick(object, params);
+
+const pickFromObject = (object, params = ['name', 'last_name', 'email', 'role']) =>
+  lodash.pick(object, params);
+
 exports.createUser = (req, res, next) =>
   createUser(req.body)
-    .then(user => res.send(pick(user)))
+    .then(user => res.send(pickFromObject(user)))
     .catch(next);
 
 exports.signIn = (req, res, next) =>
@@ -40,12 +43,12 @@ exports.createAdminUser = (req, res, next) =>
       if (user) {
         logger.info(`User ${user.dataValues.email} exists, updating values and setting admin role`);
         return updateUser(user.dataValues.email, { role: ROLES.admin })
-          .then(updatedUser => res.send(pick(updatedUser)))
+          .then(updatedUser => res.send(pickFromObject(updatedUser)))
           .catch(error => next(errors.badRequestError(error.message)));
       }
       logger.info(`User does not exist, creating a new admin user with email ${req.body.email}`);
       return createUser({ ...req.body, role: ROLES.admin })
-        .then(adminUser => res.send(pick(adminUser)))
+        .then(adminUser => res.send(pickFromObject(adminUser)))
         .catch(error => next(errors.badRequestError(error.message)));
     })
     .catch(error => next(error.badRequestError(error.message)));
