@@ -8,15 +8,15 @@ const {
   }
 } = require('../../config');
 
-exports.validatePassword = (dbPassword, user) =>
+exports.validatePassword = (dbUser, user) =>
   bcrypt
-    .compare(user.password, dbPassword)
+    .compare(user.password, dbUser.password)
     .then(passwordExists => {
       if (!passwordExists) {
         return Promise.reject(errors.badRequestError('Wrong password!'));
       }
       logger.info('User exists and passwords are matching');
-      const token = jwt.encode({ email: user.email }, secret);
+      const token = jwt.encode({ email: user.email, role: dbUser.role }, secret);
       return Promise.resolve({ token });
     })
     .catch(error => Promise.reject(errors.badRequestError(error.message)));

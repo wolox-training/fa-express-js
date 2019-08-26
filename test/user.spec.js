@@ -9,7 +9,9 @@ const {
     session: { secret }
   }
 } = require('../config');
-const { createManyUsers } = require('./utils');
+const { createManyUsers, buildUser, extendUser, createUser } = require('./utils');
+const { findUser } = require('../app/services/users');
+const { ROLES } = require('../app/constants');
 
 describe('User Creation', () => {
   it('Responds with success when params are right and user is created correctly', () =>
@@ -182,4 +184,66 @@ describe('List Users', () => {
             )
           )
       ));
+});
+
+describe('Sign-up an user with admin permissions', () => {
+  it(`Responds with success when the auth token is valid for admin 
+  requests and creates a new user with admin permissions`, () => {
+    extendUser('adminUser', { role: 'admin' });
+    return createUser('adminUser').then(admin => {
+      const token = jwt.encode({ email: admin.dataValues.email, role: admin.dataValues.role }, secret);
+      return request(app)
+        .post('/admin/users')
+        .send(user)
+        .set('authorization', token)
+        .then(response =>
+          findUser({ email: user.email }).then(foundUser => {
+            expect(response.status).toBe(200);
+            expect(foundUser.dataValues.role).toBe(ROLES.admin);
+          })
+        );
+    });
+  });
+
+  it('Responds with unauthorized when user is not admin', () =>
+    buildUser().then(({ dataValues }) =>
+      request(app)
+        .post('/users')
+        .send(dataValues)
+        .then(() =>
+          request(app)
+            .post('/users/sessions')
+            .send({ email: dataValues.email, password: dataValues.password })
+            .then(token =>
+              request(app)
+                .post('/admin/users')
+                .send(user)
+                .set('authorization', token.body.token)
+                .then(response => {
+                  expect(response.status).toBe(401);
+                  expect(response.body.message).toBe('You dont have permissions for this request');
+                })
+            )
+        )
+    ));
+
+  it('Responds with success when token is valid and updates the admin value of the user created if it exists', () =>
+    createUser('adminUser').then(admin => {
+      const token = jwt.encode({ email: admin.dataValues.email, role: admin.dataValues.role }, secret);
+      return request(app)
+        .post('/users')
+        .send(user)
+        .then(() =>
+          request(app)
+            .post('/admin/users')
+            .send(user)
+            .set('authorization', token)
+            .then(response =>
+              findUser({ email: user.email }).then(newAdmin => {
+                expect(response.status).toBe(200);
+                expect(newAdmin.dataValues.role).toBe(ROLES.admin);
+              })
+            )
+        );
+    }));
 });

@@ -5,7 +5,7 @@ exports.userSchema = {
   email: {
     in: ['body'],
     matches: {
-      options: /^[a-zA-Z0-9]+@wolox.([A-Za-z])+$/,
+      options: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@wolox.([A-Za-z])+$/,
       errorMessage: errors.badRequestError('The email must have the wolox domain')
     },
     custom: {
@@ -48,7 +48,7 @@ exports.signInSchema = {
   email: {
     in: ['body'],
     matches: {
-      options: /^[a-zA-Z0-9]+@wolox.([A-Za-z])+$/,
+      options: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@wolox.([A-Za-z])+$/,
       errorMessage: errors.badRequestError('The email must have the wolox domain')
     },
 
@@ -65,6 +65,17 @@ exports.signInSchema = {
       errorMessage: errors.badRequestError(
         'The password must have letters and numbers and has to be at least 8 chars long'
       )
+    }
+  }
+};
+
+exports.adminSchema = {
+  ...exports.userSchema,
+  email: {
+    in: ['body'],
+    matches: {
+      options: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@wolox.([A-Za-z])+$/,
+      errorMessage: errors.badRequestError('The email must have the wolox domain')
     }
   }
 };

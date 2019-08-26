@@ -1,4 +1,7 @@
 'use strict';
+
+const { VALIDATION_ROLES } = require('../constants');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -7,7 +10,11 @@ module.exports = (sequelize, DataTypes) => {
       name: { type: DataTypes.STRING, allowNull: false },
       last_name: { type: DataTypes.STRING, allowNull: false },
       email: { type: DataTypes.STRING, allowNull: false, unique: true },
-      password: { type: DataTypes.STRING, allowNull: false }
+      password: { type: DataTypes.STRING, allowNull: false },
+      role: {
+        type: DataTypes.STRING,
+        validate: { isIn: { args: VALIDATION_ROLES, msg: 'Invalid role' } }
+      }
     },
     { tableName: 'users', timestamps: false }
   );
