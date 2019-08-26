@@ -1,12 +1,11 @@
 const { createUser, findUser, getUsers, updateUser } = require('../services/users');
-const lodash = require('lodash');
+const { pick } = require('lodash');
 const logger = require('../logger');
 const { validatePassword } = require('../utils/helpers');
 const errors = require('../errors');
 const { PAGESIZE, FIRSTPAGE, ROLES } = require('../constants');
 
-const pickFromObject = (object, params = ['name', 'last_name', 'email', 'role']) =>
-  lodash.pick(object, params);
+const pickFromObject = (user, params = ['name', 'last_name', 'email', 'role']) => pick(user, params);
 
 exports.createUser = (req, res, next) =>
   createUser(req.body)
@@ -41,7 +40,9 @@ exports.createAdminUser = (req, res, next) =>
   findUser({ email: req.body.email })
     .then(user => {
       if (user) {
-        logger.info(`User ${user.dataValues.email} exists, updating values and setting admin role`);
+        logger.info(
+          `User ${user.dataValues.email} exists, updating role from ${user.dataValues.role} to admin`
+        );
         return updateUser(user.dataValues.email, { role: ROLES.admin })
           .then(updatedUser => res.send(pickFromObject(updatedUser)))
           .catch(error => next(errors.badRequestError(error.message)));

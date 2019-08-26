@@ -5,3 +5,5 @@ exports.ROLES = {
   admin: 'admin',
   client: 'client'
 };
+
+exports.VALIDATION_ROLES = [exports.ROLES.admin, exports.ROLES.client];
