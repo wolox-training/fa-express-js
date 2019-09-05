@@ -28,3 +28,5 @@ exports.decodeJwt = token => {
     throw errors.unauthorizedError(error.message);
   }
 };
+
+exports.filterAlbumById = (albums, id) => albums.filter(album => album.albumId.toString() === id);

@@ -4,7 +4,7 @@ const { decodeJwt } = require('../utils/helpers');
 const {
   ROLES: { admin }
 } = require('../constants');
-exports.checkSession = async (req, _, next) => {
+exports.checkSession = async (req, res, next) => {
   const token = req.headers.authorization;
   try {
     if (token) {
@@ -12,6 +12,7 @@ exports.checkSession = async (req, _, next) => {
       if (email) {
         const user = await findUser({ email });
         if (user) {
+          res.locals.user = user;
           return next();
         }
         return next(errors.unauthorizedError('Invalid Token'));

@@ -12,9 +12,7 @@ exports.createUser = user =>
 exports.findUser = params =>
   User.findOne({
     where: params
-  }).catch(error => {
-    throw errors.databaseError(error.message);
-  });
+  }).catch(error => Promise.reject(errors.databaseError(error.message)));
 
 exports.getUsers = (offset, limit) =>
   User.findAndCountAll({
