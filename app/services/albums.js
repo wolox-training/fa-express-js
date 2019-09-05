@@ -1,6 +1,6 @@
 const axios = require('axios');
 const errors = require('../errors');
-const AlbumsPurchase = require('../models');
+const { AlbumsPurchases } = require('../models');
 const {
   common: {
     api: { albumsBaseUrl }
@@ -15,10 +15,14 @@ exports.getPhotos = id =>
     .get(`${albumsBaseUrl}albums/photos?albumId=${id}`)
     .catch(() => Promise.reject(errors.defaultError('Server is unavailable')));
 
-exports.getPurchasedAlbums = params => AlbumsPurchase.findAll({ where: params });
+exports.getPurchasedAlbums = params =>
+  AlbumsPurchases.findAll({ where: params }).catch(err => {
+    logger.error(err.message);
+    Promise.reject(errors.databaseError());
+  });
 
 exports.purchaseAlbum = (album, user, albumName) =>
-  AlbumsPurchase.create({ album, user, album_name: albumName }).catch(err => {
+  AlbumsPurchases.create({ album, user, album_name: albumName }).catch(err => {
     logger.error(err.message);
     Promise.reject(errors.databaseError());
   });

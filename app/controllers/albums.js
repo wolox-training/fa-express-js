@@ -19,12 +19,12 @@ exports.buyAlbum = (req, res, next) =>
   getAlbums(req.params.id)
     .then(album => {
       const { user } = res.locals;
-      return getPurchasedAlbums({ user: user.email, album: req.params.id })
+      return getPurchasedAlbums({ user: user.dataValues.email, album: req.params.id })
         .then(albums => {
-          if (albums) {
+          if (albums.length > 0) {
             return Promise.reject(errors.badRequestError('You have bought this book'));
           }
-          return purchaseAlbum(req.params.id, user, album)
+          return purchaseAlbum(req.params.id, user.email, album.data.title)
             .then(albumPurchased => res.send({ albumPurchased }))
             .catch(next);
         })
