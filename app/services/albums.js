@@ -18,11 +18,11 @@ exports.getPhotos = id =>
 exports.getPurchasedAlbums = params =>
   AlbumsPurchases.findAll({ where: params }).catch(err => {
     logger.error(err.message);
-    Promise.reject(errors.databaseError());
+    return Promise.reject(errors.databaseError());
   });
 
 exports.purchaseAlbum = (album, user, albumName) =>
   AlbumsPurchases.create({ album, user, album_name: albumName }).catch(err => {
     logger.error(err.message);
-    Promise.reject(errors.databaseError());
+    return Promise.reject(errors.databaseError());
   });
