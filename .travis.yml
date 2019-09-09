@@ -6,7 +6,7 @@ node_js:
 sudo: true
 
 env:
-  - CXX=g++-4.8 NODE_ENV=testing DB_USERNAME=postgres DB_NAME_TEST=booktest
+  - CXX=g++-4.8 NODE_ENV=testing DB_USERNAME=postgres DB_NAME_TEST=booktest PORT=3000
 addons:
   apt:
     sources:
