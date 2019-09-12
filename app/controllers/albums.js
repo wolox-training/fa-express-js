@@ -1,4 +1,10 @@
-const { getAlbums, getPhotos, getPurchasedAlbums, purchaseAlbum } = require('../services/albums');
+const {
+  getAlbums,
+  getPhotos,
+  getPurchasedAlbums,
+  purchaseAlbum,
+  getAlbumsById
+} = require('../services/albums');
 const { filterAlbumById } = require('../utils/helpers');
 const errors = require('../errors');
 
@@ -15,19 +21,21 @@ exports.getPhotos = (req, res, next) =>
     })
     .catch(next);
 
-exports.buyAlbum = (req, res, next) =>
-  getAlbums(req.params.id)
-    .then(album => {
-      const { user } = res.locals;
-      return getPurchasedAlbums({ user: user.dataValues.email, album: req.params.id })
-        .then(albums => {
-          if (albums.length > 0) {
-            return Promise.reject(errors.badRequestError('You have bought this book'));
-          }
-          return purchaseAlbum(req.params.id, user.email, album.data.title)
-            .then(albumPurchased => res.send({ albumPurchased }))
-            .catch(next);
-        })
-        .catch(next);
+exports.buyAlbum = (req, res, next) => {
+  const { user } = res.locals;
+  return getPurchasedAlbums({ id: `${user.id}${req.params.id}` })
+    .then(albums => {
+      if (albums.length > 0) {
+        return Promise.reject(errors.badRequestError('You have bought this book'));
+      }
+      return getAlbumsById(req.params.id).then(album =>
+        purchaseAlbum({
+          id: `${user.id}${req.params.id}`,
+          userId: user.id,
+          albumId: album.data.id,
+          album_name: album.data.title
+        }).then(albumPurchased => res.send({ albumPurchased }))
+      );
     })
     .catch(next);
+};

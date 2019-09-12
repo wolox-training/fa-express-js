@@ -17,10 +17,9 @@ describe('Purchase Albums', () => {
         .post('/albums/1')
         .set('authorization', token)
         .then(response =>
-          getPurchasedAlbums({ user: user.email }).then(purchasedAlbums => {
+          getPurchasedAlbums({ userId: user.id }).then(([albums0]) => {
             expect(response.status).toBe(200);
-            expect(purchasedAlbums[0].user).toBe(user.email);
-            expect(purchasedAlbums[0].album).toBe(1);
+            expect(albums0.userId).toBe(user.id);
           })
         );
     }));
@@ -55,12 +54,12 @@ describe('Purchase Albums', () => {
               .post('/albums/1')
               .set('authorization', token2)
               .then(response =>
-                getPurchasedAlbums({ album: 1 }).then(purchasedAlbums => {
+                getPurchasedAlbums({ albumId: 1 }).then(([album0, album1]) => {
                   expect(response.status).toBe(200);
-                  expect(purchasedAlbums[0].dataValues.user).toBe(user.email);
-                  expect(purchasedAlbums[1].dataValues.user).toBe(user2.email);
-                  expect(purchasedAlbums[1].dataValues.album).toBe(response.body.albumPurchased.album);
-                  expect(purchasedAlbums[0].dataValues.album).toBe(response.body.albumPurchased.album);
+                  expect(album0.dataValues.userId).toBe(user.id);
+                  expect(album1.dataValues.userId).toBe(user2.id);
+                  expect(album0.dataValues.albumId).toBe(response.body.albumPurchased.albumId);
+                  expect(album1.dataValues.albumId).toBe(response.body.albumPurchased.albumId);
                 })
               );
           })
