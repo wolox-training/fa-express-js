@@ -18,5 +18,5 @@ services:
   - postgresql
 
 before_script:
-  - psql -c "CREATE DATABASE $DB_NAME_TEST;" -U postgres
+  - psql -c "CREATE DATABASE bookstest;" -U postgres
   - npm run migrations-test
