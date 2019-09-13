@@ -5,7 +5,6 @@ const {
   purchaseAlbum,
   getAlbumsById
 } = require('../services/albums');
-const { filterAlbumById } = require('../utils/helpers');
 const errors = require('../errors');
 
 exports.listAlbums = (req, res, next) =>
@@ -15,10 +14,7 @@ exports.listAlbums = (req, res, next) =>
 
 exports.getPhotos = (req, res, next) =>
   getPhotos(req.params.id)
-    .then(response => {
-      const photos = filterAlbumById(response.data, req.params.id);
-      return res.send(photos);
-    })
+    .then(response => res.send(response))
     .catch(next);
 
 exports.buyAlbum = (req, res, next) => {
@@ -33,7 +29,7 @@ exports.buyAlbum = (req, res, next) => {
           id: `${user.id}${req.params.id}`,
           userId: user.id,
           albumId: album.data.id,
-          album_name: album.data.title
+          albumName: album.data.title
         }).then(albumPurchased => res.send({ albumPurchased }))
       );
     })

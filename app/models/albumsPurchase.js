@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       id: { type: DataTypes.STRING, unique: true, allowNull: false, primaryKey: true },
       userId: { type: DataTypes.STRING },
       albumId: { type: DataTypes.INTEGER },
-      album_name: { type: DataTypes.STRING }
+      albumName: { type: DataTypes.STRING, field: 'album_name' }
     },
     { tableName: 'albums_purchases', timestamps: false }
   );
