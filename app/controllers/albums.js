@@ -19,14 +19,13 @@ exports.getPhotos = (req, res, next) =>
 
 exports.buyAlbum = (req, res, next) => {
   const { user } = res.locals;
-  return getPurchasedAlbums({ id: `${user.id}${req.params.id}` })
+  return getPurchasedAlbums({ userId: user.id })
     .then(albums => {
       if (albums.length > 0) {
         return Promise.reject(errors.badRequestError('You have bought this book'));
       }
       return getAlbumsById(req.params.id).then(album =>
         purchaseAlbum({
-          id: `${user.id}${req.params.id}`,
           userId: user.id,
           albumId: album.data.id,
           albumName: album.data.title
